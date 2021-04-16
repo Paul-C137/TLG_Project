@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+   <body>
+      <table border = 1>
+         <thead>
+            <td>Date</td>
+            <td>Time</td>
+            <td>Weight</td>
+         </thead>
+         
+         {% for row in rows %}
+            <tr>
+               <td>{{ row["my_date"] }}</td> 
+               <td>{{ row["my_time"] }}</td>
+               <td>{{ row["my_weight"] }}</td>  
+            </tr>
+         {% endfor %}
+      </table>
+      
+      <a href = "/">Go back to home page</a>
+   </body>
+</html>
