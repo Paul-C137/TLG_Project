@@ -1,9 +1,23 @@
 <html>
    <body>
       <form action = "{{ url_for('addrec') }}" method = "POST">
-         <h3>Student Information</h3>
-         Name:<br>
+         <h1>Health Data</h1>
+         <label for="weight">Enter weight:</label>
          <input type = "text" name = "weight" /><br>
+         <label for="blood_sugar">Enter Blood Sugar:</label>
+         <input type = "text" name = "blood_sugar" /><br>
+         <label for="blood_sugar">Enter Ketones:</label>
+         <input type = "text" name = "ketone" /><br>
+         <label for="blood_sugar">Enter hours of sleep:</label>
+         <input type = "text" name = "sleep" /><br>
+         <label for="activity">Choose a an activity:</label>
+         <select id="activity" name="activity">
+             <option value="none">None</option>
+             <option value="walk">Walk</option>
+             <option value="short run">Short Run</option>
+             <option value="long run">Long Run</option>
+             <option value="calisthenics">Calisthenics</option>
+         </select>
          <input type = "submit" value = "submit" /><br>
       </form>
    </body>

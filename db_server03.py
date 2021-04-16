@@ -35,13 +35,22 @@ def addrec():
     try:
         now = datetime.datetime.now()       # gets datetime stamp
         weight = request.form['weight']     # manual entry of weight
+        blood_sugar = request.form['blood_sugar']
+        ketone = request.form['ketone']
+        sleep = request.form['sleep']
+        activity = request.form['activity']
+
+
 
         # connect to sqliteDB
         with sql.connect("database.db") as con:
             cur = con.cursor()
 
             # place the info from the form and datetime stamp into sqliteDB
-            cur.execute("INSERT INTO weight_table (now_t,weight_t) VALUES (?,?)",(now,weight) )
+            cur.execute("INSERT INTO weight_table (now_t,weight_t,\
+                blood_sugar_t,ketone_t,sleep_t,activity_t) \
+                VALUES (?,?,?,?,?,?)",(now,weight,blood_sugar,ketone,sleep,\
+                activity) )
             # commit the transaction to our sqliteDB
             con.commit()
         # if we have made it this far, the record was successfully added to the DB
@@ -73,7 +82,9 @@ if __name__ == '__main__':
         con = sql.connect('database.db')
         print("Opened database successfully")
         # ensure that the table students is ready to be written to
-        con.execute('CREATE TABLE IF NOT EXISTS weight_table (now_t TEXT, weight_t TEXT)')
+        con.execute('CREATE TABLE IF NOT EXISTS weight_table (now_t TEXT, \
+            weight_t TEXT, blood_sugar_t TEXT, ketone_t TEXT, sleep_t TEXT, \
+            activity_t TEXT)')
         print("Table created successfully")
         con.close()
         # begin Flask Application 

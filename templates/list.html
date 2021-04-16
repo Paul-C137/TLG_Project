@@ -5,12 +5,21 @@
          <thead>
             <td>Date</td>
             <td>Weight</td>
+            <td>Blood Sugar</td>
+            <td>Ketones</td>
+            <td>Sleep</td>
+            <td>Activity</td>
+
          </thead>
          
          {% for row in rows %}
             <tr>
                <td>{{ row["now_t"] }}</td> 
                <td>{{ row["weight_t"] }}</td> 
+               <td>{{ row["blood_sugar_t"] }}</td> 
+               <td>{{ row["ketone_t"] }}</td> 
+               <td>{{ row["sleep_t"] }}</td> 
+               <td>{{ row["activity_t"] }}</td> 
             </tr>
          {% endfor %}
       </table>
