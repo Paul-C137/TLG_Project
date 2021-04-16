@@ -22,16 +22,21 @@ app = Flask(__name__)
 def home():
     return render_template('home.html')
 
-# return entry_form.html (a way to add a student to our sqliteDB)
+# return entry_form.html (a way to add a health data to our sqliteDB)
 @app.route('/enternew')
 def new_weight():
     return render_template('entry_form.html')
 
+# return entry_quote.html (a way to add a health data to our sqliteDB)
+@app.route('/enterquote')
+def new_quote():
+    return render_template('entry_quote.html')
+
 # if someone uses entry_form.html it will generate a POST
 # this post will be sent to /addrec
 # where the information will be added to the sqliteDB
-@app.route('/addrec',methods = ['POST'])
-def addrec():
+@app.route('/addhealth',methods = ['POST'])
+def addhealth():
     try:
         now = datetime.datetime.now()       # gets datetime stamp
         weight = request.form['weight']     # manual entry of weight
@@ -62,11 +67,38 @@ def addrec():
 
     finally:
         con.close()     # successful or not, close the connection to sqliteDB
-        return render_template("result.html",msg = msg)    #
+        return render_template("result.html",msg = msg)   
+
+@app.route('/addquote',methods = ['POST'])
+def addquote():
+    try:
+        now = datetime.datetime.now()       # gets datetime stamp
+        name = request.form['name']
+        quote = request.form['quote']     # manual entry of weight
+        
+        # connect to sqliteDB
+        with sql.connect("database.db") as con:
+            cur = con.cursor()
+
+            # place the info from the form and datetime stamp into sqliteDB
+            cur.execute("INSERT INTO quote_table (now_t,name_t,quote_t) \
+                VALUES (?,?,?)",(now,name,quote) )
+            # commit the transaction to our sqliteDB
+            con.commit()
+        # if we have made it this far, the record was successfully added to the DB
+        msg = "Record successfully added"
+        
+    except:
+        con.rollback()  # this is the opposite of a commit()
+        msg = "error in insert operation"    # we were NOT successful
+
+    finally:
+        con.close()     # successful or not, close the connection to sqliteDB
+        return render_template("result.html",msg = msg)    #         
 
 # return all entries from our sqliteDB as HTML
 @app.route('/list')
-def show_weight():
+def show_health():
     con = sql.connect("database.db")
     con.row_factory = sql.Row
     
@@ -74,7 +106,18 @@ def show_weight():
     cur.execute("SELECT * from weight_table")           # pull all information from the table "weight_table"
     
     rows = cur.fetchall()
-    return render_template("list.html",rows = rows) # return all of the sqliteDB info as HTML
+    return render_template("list_health.html",rows = rows) # return all of the sqliteDB info as HTML
+
+@app.route('/listquote')
+def show_quote():
+    con = sql.connect("database.db")
+    con.row_factory = sql.Row
+    
+    cur = con.cursor()
+    cur.execute("SELECT * from quote_table")           # pull all information from the table "weight_table"
+    
+    rows = cur.fetchall()
+    return render_template("list_quote.html",rows = rows) # return all of the sqliteDB info as HTML    
 
 if __name__ == '__main__':
     try:
@@ -85,6 +128,8 @@ if __name__ == '__main__':
         con.execute('CREATE TABLE IF NOT EXISTS weight_table (now_t TEXT, \
             weight_t TEXT, blood_sugar_t TEXT, ketone_t TEXT, sleep_t TEXT, \
             activity_t TEXT)')
+        con.execute('CREATE TABLE IF NOT EXISTS quote_table (now_t TEXT, \
+            name_t TEXT, quote_t TEXT)')
         print("Table created successfully")
         con.close()
         # begin Flask Application 
