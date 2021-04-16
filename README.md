@@ -13,10 +13,13 @@ These instructions will get you a copy of the project up and running on your loc
 for development and testing purposes. See deployment for notes on how to deploy the project
 on a live system.
 
+*** Coming Soon!!! ***
+
 ### Prerequisites
 
 Install python3
-Install 
+Install requests
+Install flask
 
 ## Built With
 
