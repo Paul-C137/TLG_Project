@@ -15,6 +15,7 @@ from flask import Flask
 from flask import render_template
 from flask import request
 
+
 app = Flask(__name__)
 
 # return home.html (landing page)
@@ -31,6 +32,11 @@ def new_weight():
 @app.route('/enterquote')
 def new_quote():
     return render_template('entry_quote.html')
+
+# return entry_csv.html (a way to add a health data to our sqliteDB)
+@app.route('/entercsv')
+def new_csv():
+    return render_template('entry_csv.html')    
 
 # if someone uses entry_form.html it will generate a POST
 # this post will be sent to /addrec
@@ -94,7 +100,34 @@ def addquote():
 
     finally:
         con.close()     # successful or not, close the connection to sqliteDB
-        return render_template("result.html",msg = msg)    #         
+        return render_template("result.html",msg = msg) 
+
+@app.route('/addquote',methods = ['POST'])
+def addcsv():
+    try:
+        now = datetime.datetime.now()       # gets datetime stamp
+        name = request.form['name']
+        quote = request.form['quote']     # manual entry of weight
+        
+        # connect to sqliteDB
+        with sql.connect("database.db") as con:
+            cur = con.cursor()
+
+            # place the info from the form and datetime stamp into sqliteDB
+            cur.execute("INSERT INTO quote_table (now_t,name_t,quote_t) \
+                VALUES (?,?,?)",(now,name,quote) )
+            # commit the transaction to our sqliteDB
+            con.commit()
+        # if we have made it this far, the record was successfully added to the DB
+        msg = "Record successfully added"
+        
+    except:
+        con.rollback()  # this is the opposite of a commit()
+        msg = "error in insert operation"    # we were NOT successful
+
+    finally:
+        con.close()     # successful or not, close the connection to sqliteDB
+        return render_template("result.html",msg = msg)    #                    #         
 
 # return all entries from our sqliteDB as HTML
 @app.route('/list')
