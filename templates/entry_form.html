@@ -3,22 +3,31 @@
       <form action = "{{ url_for('addhealth') }}" method = "POST">
          <h1>Health Data</h1>
          <label for="weight">Enter weight:</label>
-         <input type = "text" name = "weight" /><br>
+         <br>
+         <input type = "text" name = "weight" style="background-color:rgb(219,255,51)"/><br>
          <label for="blood_sugar">Enter Blood Sugar:</label>
-         <input type = "text" name = "blood_sugar" /><br>
+         <br>
+         <input type = "text" name = "blood_sugar" style="background-color:rgb(219,255,51)"/><br>
          <label for="blood_sugar">Enter Ketones:</label>
-         <input type = "text" name = "ketone" /><br>
+         <br>
+         <input type = "text" name = "ketone" style="background-color:rgb(219,255,51)"/><br>
          <label for="blood_sugar">Enter hours of sleep:</label>
-         <input type = "text" name = "sleep" /><br>
+         <br>
+         <input type = "text" name = "sleep" style="background-color:rgb(219,255,51)"/><br>
          <label for="activity">Choose a an activity:</label>
-         <select id="activity" name="activity">
+         <br>
+         <select id="activity" name="activity"style="background-color:rgb(219,255,51)">
              <option value="none">None</option>
              <option value="walk">Walk</option>
              <option value="short run">Short Run</option>
              <option value="long run">Long Run</option>
              <option value="calisthenics">Calisthenics</option>
          </select>
-         <input type = "submit" value = "submit" /><br>
+         <br>
+         <br>
+         <input type = "submit" style="height:75px;width:300px;font-size:40;color:rgb(255,255,255);background-color:rgb(0,0,255);border-radius:16px" value = "submit" /><br>
+        <br>
+        <a href = "/">Go back to home page</a>
       </form>
    </body>
 </html>
