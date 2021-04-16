@@ -4,15 +4,13 @@
       <table border = 1>
          <thead>
             <td>Date</td>
-            <td>Time</td>
             <td>Weight</td>
          </thead>
          
          {% for row in rows %}
             <tr>
-               <td>{{ row["my_date"] }}</td> 
-               <td>{{ row["my_time"] }}</td>
-               <td>{{ row["my_weight"] }}</td>  
+               <td>{{ row["now_t"] }}</td> 
+               <td>{{ row["weight_t"] }}</td> 
             </tr>
          {% endfor %}
       </table>

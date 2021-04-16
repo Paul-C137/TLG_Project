@@ -8,7 +8,6 @@
 
 # standard library
 import sqlite3 as sql
-import datetime
 
 # python3 -m pip install flask
 from flask import Flask
@@ -22,9 +21,9 @@ app = Flask(__name__)
 def home():
     return render_template('home.html')
 
-# return entry_form.html (a way to add a student to our sqliteDB)
+# return entry_form.html (a way to add a my daily data to the sqliteDB)
 @app.route('/enternew')
-def new_weight():
+def new_data():
     return render_template('entry_form.html')
 
 # if someone uses entry_form.html it will generate a POST
@@ -33,15 +32,14 @@ def new_weight():
 @app.route('/addrec',methods = ['POST'])
 def addrec():
     try:
-        now = datetime.datetime.now()       # gets datetime stamp
-        weight = request.form['weight']     # manual entry of weight
+        nm = request.form['nm']     # weight
 
         # connect to sqliteDB
         with sql.connect("database.db") as con:
             cur = con.cursor()
 
-            # place the info from the form and datetime stamp into sqliteDB
-            cur.execute("INSERT INTO weight_table (now_t,weight_t) VALUES (?,?)",(now,weight) )
+            # place the info from our form into the sqliteDB
+            cur.execute("INSERT INTO weight_tbl (name) VALUES (?)",(nm) )
             # commit the transaction to our sqliteDB
             con.commit()
         # if we have made it this far, the record was successfully added to the DB
@@ -53,27 +51,27 @@ def addrec():
 
     finally:
         con.close()     # successful or not, close the connection to sqliteDB
-        return render_template("result.html",msg = msg)    #
+        return render_template("result.html",msg = msg)    
 
-# return all entries from our sqliteDB as HTML
 @app.route('/list')
-def show_weight():
+def list_weight():
     con = sql.connect("database.db")
     con.row_factory = sql.Row
     
     cur = con.cursor()
-    cur.execute("SELECT * from weight_table")           # pull all information from the table "weight_table"
+    cur.execute("SELECT * from weight_tbl")           # pull all information from the table "students"
     
     rows = cur.fetchall()
     return render_template("list.html",rows = rows) # return all of the sqliteDB info as HTML
+
 
 if __name__ == '__main__':
     try:
         # ensure the sqliteDB is created
         con = sql.connect('database.db')
         print("Opened database successfully")
-        # ensure that the table students is ready to be written to
-        con.execute('CREATE TABLE IF NOT EXISTS weight_table (now_t TEXT, weight_t TEXT)')
+        # ensure that the table weight_tbl is ready to be written to
+        con.execute('CREATE TABLE IF NOT EXISTS weight_tbl (name TEXT)')
         print("Table created successfully")
         con.close()
         # begin Flask Application 
