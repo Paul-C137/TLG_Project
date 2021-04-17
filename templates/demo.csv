@@ -1,4 +1,4 @@
-date,weight,blood sugar,ketones,sleep,activity
+now_t,weight_t,blood sugar_t,ketones_t,sleep_t,activity_t
 1/1/21,195,90,1.2,7,long run
 1/7/21,195,90,1.2,7,walk
 1/14/21,195,90,1.2,7,run

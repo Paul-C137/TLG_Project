@@ -10,10 +10,12 @@
 import sqlite3 as sql
 import datetime
 
+
 # python3 -m pip install flask
 from flask import Flask
 from flask import render_template
 from flask import request
+import pandas as pd
 
 
 app = Flask(__name__)
@@ -102,22 +104,17 @@ def addquote():
         con.close()     # successful or not, close the connection to sqliteDB
         return render_template("result.html",msg = msg) 
 
-@app.route('/addquote',methods = ['POST'])
+@app.route('/addcsv',methods = ['POST'])
 def addcsv():
+    part_path = request.form['path']
+    full_path = f"/Users/paullack/{part_path}"
+    new_csv_data = pd.read_csv(full_path)
     try:
-        now = datetime.datetime.now()       # gets datetime stamp
-        name = request.form['name']
-        quote = request.form['quote']     # manual entry of weight
-        
-        # connect to sqliteDB
-        with sql.connect("database.db") as con:
-            cur = con.cursor()
-
-            # place the info from the form and datetime stamp into sqliteDB
-            cur.execute("INSERT INTO quote_table (now_t,name_t,quote_t) \
-                VALUES (?,?,?)",(now,name,quote) )
+        con = sql.connect("database.db")
+        # place the info from the csv into sqliteDB
+        new_csv_data.to_sql('weight_table', con, if_exists='replace', index=False)
             # commit the transaction to our sqliteDB
-            con.commit()
+        con.commit()
         # if we have made it this far, the record was successfully added to the DB
         msg = "Record successfully added"
         
@@ -153,6 +150,7 @@ def show_quote():
     return render_template("list_quote.html",rows = rows) # return all of the sqliteDB info as HTML    
 
 if __name__ == '__main__':
+
     try:
         # ensure the sqliteDB is created
         con = sql.connect('database.db')
