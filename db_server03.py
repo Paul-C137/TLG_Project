@@ -160,7 +160,7 @@ def show_quote():
 @app.route("/weather")
 def weather():
     # put your api token from you free account to weatherbit.io here.
-    api_token = '554f35e912074ab7b2524563f8d3619b'
+    api_token = 'PUT YOUR OWN KEY HERE'
 
     # use weatherbit.io documentation to find the correct url base to put 
     # here.  This will probably work for you.
