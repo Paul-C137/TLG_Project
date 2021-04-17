@@ -9,13 +9,20 @@
 # standard library
 import sqlite3 as sql
 import datetime
+import base64
+import requests
+from io import BytesIO
 
 
 # python3 -m pip install flask
+import json
 from flask import Flask
 from flask import render_template
 from flask import request
 import pandas as pd
+import numpy as numpy
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 
 
 app = Flask(__name__)
@@ -148,6 +155,63 @@ def show_quote():
     
     rows = cur.fetchall()
     return render_template("list_quote.html",rows = rows) # return all of the sqliteDB info as HTML    
+
+
+@app.route("/weather")
+def weather():
+    # put your api token from you free account to weatherbit.io here.
+    api_token = '554f35e912074ab7b2524563f8d3619b'
+
+    # use weatherbit.io documentation to find the correct url base to put 
+    # here.  This will probably work for you.
+    api_url_base = 'http://api.weatherbit.io/v2.0/'
+
+    # creates a request and assigns it to a variable
+    response = requests.get(api_url_base + 'forecast/daily?city=' + 'sedro-woolley' + ',' \
+    + 'wa' + '&key=' + api_token) 
+
+    weather_dict = json.loads(response.text)
+
+    # creates the necessary list variables to hold the data from the API
+    forecast_high_temp = []
+    forecast_low_temp = []
+    forecast_clouds = []
+    date = []
+    visibility = []
+    rain = []
+    moonset = []
+    moonrise = []
+    sunset = []
+    sunrise = []
+    wind_gust_speed = []
+    moon_illumination = []
+
+    # uses a for loop to load each of the list variables with 7 consecutive days
+    # worth of data.
+    for i in range(7):
+        forecast_high_temp.append(weather_dict.get('data')[i].get('high_temp'))
+        forecast_low_temp.append(weather_dict.get('data')[i].get('low_temp'))   
+        forecast_clouds.append(weather_dict.get('data')[i].get('clouds'))   
+        date.append(weather_dict.get('data')[i].get('valid_date'))  
+        visibility.append(weather_dict.get('data')[i].get('vis'))
+        rain.append(weather_dict.get('data')[i].get('precip'))
+        moonset.append(weather_dict.get('data')[i].get('moonset_ts'))
+        moonrise.append(weather_dict.get('data')[i].get('moonrise_ts')) 
+        sunset.append(weather_dict.get('data')[i].get('sunset_ts'))
+        sunrise.append(weather_dict.get('data')[i].get('sunrise_ts'))
+        wind_gust_speed.append(weather_dict.get('data')[i].get('wind_gust_spd'))
+        moon_illumination.append(weather_dict.get('data')[i].get('moon_phase_lunation'))
+
+    # Generate the figure **without using pyplot**.
+    fig = Figure()
+    ax = fig.subplots()
+    ax.plot(forecast_high_temp)
+    # Save it to a temporary buffer.
+    buf = BytesIO()
+    fig.savefig(buf, format="png")
+    # Embed the result in the html output.
+    data = base64.b64encode(buf.getbuffer()).decode("ascii")
+    return f"<img src='data:image/png;base64,{data}'/>"    
 
 if __name__ == '__main__':
 
