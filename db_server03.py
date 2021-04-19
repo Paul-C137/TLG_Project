@@ -29,11 +29,11 @@ from PIL import Image
 app = Flask(__name__)
 
 # create global dictionary to define an activity's 'profile'.
-ACTIVITY_PROFILE_DICT = dict({'go swimming': [25,100], 'go hiking': [10,100], \
-        'go to the tide pooltide': [10,100], 'take a scenic drive': [0,100],  \
-        'do indoor maintenance chores': [-20,100], 'go to a movie': [0,100],  \
-        'go bowling': [0,100], 'play card games': [0,100],                    \
-        'do garage maintenance': [0,2]})
+ACTIVITY_PROFILE_DICT = dict({'go swimming': [25,100], 'Go hiking': [10,100], \
+        'Go to the tide pool': [10,100], 'Take a scenic drive': [0,100],  \
+        'Do indoor maintenance chores': [-20,100], 'Go to a movie': [0,100],  \
+        'Go bowling': [0,100], 'Play card games': [0,100],                    \
+        'Do garage maintenance': [0,2]})
 
 def compare_activity_temp(x):
     activity_message = []    
@@ -197,7 +197,7 @@ def show_activities():
 @app.route('/weather',methods = ['GET', 'POST'])
 def weather():
     # put your api token from you free account to weatherbit.io here.
-    api_token = '554f35e912074ab7b2524563f8d3619b'
+    api_token = 'PLACE YOUR OWN KEY HERE'
 
     # use weatherbit.io documentation to find the correct url base to put 
     # here.  This will probably work for you.
