@@ -11,7 +11,7 @@ import sqlite3 as sql
 import datetime
 import base64
 import requests
-from io import BytesIO
+import io
 
 
 # python3 -m pip install flask
@@ -23,9 +23,39 @@ import pandas as pd
 import numpy as numpy
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
+from PIL import Image
 
 
 app = Flask(__name__)
+
+# create global dictionary to define an activity's 'profile'.
+ACTIVITY_PROFILE_DICT = dict({'go swimming': [25,100], 'go hiking': [10,100], \
+        'go to the tide pooltide': [10,100], 'take a scenic drive': [0,100],  \
+        'do indoor maintenance chores': [-20,100], 'go to a movie': [0,100],  \
+        'go bowling': [0,100], 'play card games': [0,100],                    \
+        'do garage maintenance': [0,2]})
+
+def compare_activity_temp(x):
+    activity_message = []    
+    for key in x:
+        if x.get(key)[0] <= 2 and x.get(key)[1] >= 2:
+                activity_message.append(key)  
+    return(activity_message)
+        
+
+def get_high(x):
+    # Generate the figure **without using pyplot**.
+    fig = Figure()
+    ax = fig.subplots()
+    ax.set_xlabel('Day')
+    ax.set_ylabel('Temp Celsius')
+    ax.plot(x)
+    fig.savefig('weather_high.png')
+    im = Image.open("weather_high.png")
+    data = io.BytesIO()
+    im.save(data, "PNG")
+    encoded_img_data = base64.b64encode(data.getvalue())
+    return render_template("weather.html", img_data=encoded_img_data.decode('utf-8'))
 
 # return home.html (landing page)
 @app.route('/')
@@ -45,7 +75,8 @@ def new_quote():
 # return entry_csv.html (a way to add a health data to our sqliteDB)
 @app.route('/entercsv')
 def new_csv():
-    return render_template('entry_csv.html')    
+    return render_template('entry_csv.html')  
+ 
 
 # if someone uses entry_form.html it will generate a POST
 # this post will be sent to /addrec
@@ -156,11 +187,17 @@ def show_quote():
     rows = cur.fetchall()
     return render_template("list_quote.html",rows = rows) # return all of the sqliteDB info as HTML    
 
+@app.route('/activities',methods = ['GET', 'POST'])
+def show_activities():
+        #compare_activity_profile(ACTIVITY_PROFILE_DICT) 
+    activity_message = compare_activity_temp(ACTIVITY_PROFILE_DICT)  
+    msg = activity_message
+    return render_template("activities.html",msg = msg)      
 
-@app.route("/weather")
+@app.route('/weather',methods = ['GET', 'POST'])
 def weather():
     # put your api token from you free account to weatherbit.io here.
-    api_token = 'PUT YOUR OWN KEY HERE'
+    api_token = '554f35e912074ab7b2524563f8d3619b'
 
     # use weatherbit.io documentation to find the correct url base to put 
     # here.  This will probably work for you.
@@ -201,17 +238,7 @@ def weather():
         sunrise.append(weather_dict.get('data')[i].get('sunrise_ts'))
         wind_gust_speed.append(weather_dict.get('data')[i].get('wind_gust_spd'))
         moon_illumination.append(weather_dict.get('data')[i].get('moon_phase_lunation'))
-
-    # Generate the figure **without using pyplot**.
-    fig = Figure()
-    ax = fig.subplots()
-    ax.plot(forecast_high_temp)
-    # Save it to a temporary buffer.
-    buf = BytesIO()
-    fig.savefig(buf, format="png")
-    # Embed the result in the html output.
-    data = base64.b64encode(buf.getbuffer()).decode("ascii")
-    return f"<img src='data:image/png;base64,{data}'/>"    
+    return(get_high(forecast_high_temp)) 
 
 if __name__ == '__main__':
 
